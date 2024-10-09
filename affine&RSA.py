@@ -81,7 +81,7 @@ def mod_inv(a, m):
     inverse += m
   return inverse
 
-# -- pa3 --
+
 """ ----------------- PROBLEM 1 ----------------- """
 
 
@@ -95,29 +95,29 @@ def affine_encrypt(text, a, b):
     :return: str type; the encrypted message as string of uppercase letters
     """
 
-  # FIXME: raise an error if the gcd(a, 26) is not 1
+  # raise an error if the gcd(a, 26) is not 1
   if gcd(a, 26) != 1:
     raise ValueError("The given key is invalid.")
 
   cipher = ""
   for letter in text:
     if letter.isalpha():
-      # FIXME: Use util.py to initialize 'num' to be
+      # Use util.py to initialize 'num' to be
       # the integer corresponding to the current letter
       num = int(util.letters2digits(letter))
 
-      # FIXME: Encrypt the current 'num' using the
+      # Encrypt the current 'num' using the
       # affine transformation with key (a, b).
       # Store the result in cipher_digits.
       cipher_digits = str((a * num + b) % 26)
 
       if len(cipher_digits) == 1:
-        # FIXME: If the cipherdigit is 0 - 9,
+        # If the cipherdigit is 0 - 9,
         # prepend the string with a 0
         # to make it a two-digit number
         cipher_digits = '0' + cipher_digits
 
-      # FIXME: Use util.py to append to the cipher the ENCRYPTED letter
+      # Use util.py to append to the cipher the ENCRYPTED letter
       # corresponding to the current cipher digits
       cipher += util.digits2letters(cipher_digits)
 
@@ -136,29 +136,29 @@ def affine_decrypt(ciphertext, a, b):
     :return: str type; the decrypted message as a string of uppercase letters
     """
 
-  a_inv = mod_inv(a, 26)  # FIXME: complete this line so that a_inv holds the inverse of a under modulo 26
+  a_inv = mod_inv(a, 26)  # a_inv holds the inverse of a under modulo 26
 
   text = ""
   for letter in ciphertext:
     if letter.isalpha():
       letter = letter.upper()
 
-      # FIXME: Use util.py to find the integer `num` that corresponds
+      # Use util.py to find the integer `num` that corresponds
       # to the given letter
       num = int(util.letters2digits(letter))
 
-      # FIXME: Decrypt the integer that corresponds to the current
+      # Decrypt the integer that corresponds to the current
       # encrypted letter using the decryption function for an affine
       # transformation with key (a, b) so that letter_digits holds
       # the decrypted number as a string of two digits
       letter_digits = str((a_inv * (num - b)) % 26)
 
       if len(letter_digits) == 1:
-        # FIXME: If the letter number is between 0 - 9, inclusive,
+        # If the letter number is between 0 - 9, inclusive,
         # prepend the string with a 0
         letter_digits = '0' + letter_digits
 
-      # FIXME: Use util.py to append to the text the decrypted
+      # Use util.py to append to the text the decrypted
       # letter corresponding to the current letter digits
       text += util.digits2letters(letter_digits)
   return text
@@ -178,32 +178,29 @@ def encryptRSA(plaintext, n, e):
 
   text = plaintext.replace(' ', '')  # removing whitespace
 
-  # FIXME: Use util.py to initialize 'digits' as a string of
+  # Use util.py to initialize 'digits' as a string of
   # the two-digit integers that correspond to the letters of 'text'
   digits = util.letters2digits(text)
-  # print(f"{digits = }")
 
-  # FIXME: Use util.py to initialize 'l' with the length of each RSA block
+  # Use util.py to initialize 'l' with the length of each RSA block
   l = util.blocksize(n)
-  # print(f"{l = }")
   
-  # FIXME: Use a loop to pad 'digits' with enough 23's (i.e. X's)
+  # Use a loop to pad 'digits' with enough 23's (i.e. X's)
   # so that it can be broken up into blocks of length l
   while len(digits) % l != 0:
     digits += '23'
 
   # creating a list of RSA blocks
   blocks = [digits[i:i + l] for i in range(0, len(digits), l)]
-  # print(f"{blocks = }")
 
   cipher = ""
   for b in blocks:
-    # FIXME: Initialize 'encrypted_block' so that it contains
+    # Initialize 'encrypted_block' so that it contains
     # the encryption of block 'b' as a string
     encrypted_block = str((int(b)**e) % n)
 
     if len(encrypted_block) < l:
-      # FIXME: If the encrypted block contains less digits
+      # If the encrypted block contains less digits
       # than the block size l, prepend the block with enough
       # 0's so that the numeric value of the block
       # remains the same, but the new block size is l,
@@ -211,11 +208,11 @@ def encryptRSA(plaintext, n, e):
       # one 0 to obtain '0451'
       encrypted_block = encrypted_block.zfill(l)
 
-    # FIXME: Append the encrypted block to the cipher
+    # Append the encrypted block to the cipher
     cipher += encrypted_block
   return cipher
 
-# print(encryptRSA("STOP", 2537, 13))
+# Example usage: print(encryptRSA("STOP", 2537, 13))
 """ ----------------- PROBLEM 4 ----------------- """
 
 
@@ -231,42 +228,38 @@ def decryptRSA(cipher, p, q, e):
   n = p * q
   ciphertext = str(cipher).replace(' ', '')
 
-  # FIXME: Use util.py to initialize `l` with the size of
+  # Use util.py to initialize `l` with the size of
   # each RSA block
   l = util.blocksize(n)
-  # print(f"{l = }")
   
-  # FIXME: Use a Python list comprehension to break the ciphertext
+  # Use a Python list comprehension to break the ciphertext
   # into blocks of equal length 'l'. Initialize 'blocks' so that it
   # contains these blocks as elements
   blocks = [ciphertext[i:i + l] for i in range(0, len(ciphertext), l)]
-  # print(f"{blocks = }")
   
   text = ""  # initializing the variable that will hold the decrypted text
 
-  # FIXME: Compute the inverse of e
+  # Compute the inverse of e
   e_inv = mod_inv(e, (p - 1) * (q - 1))
 
   for b in blocks:
-    # FIXME: Use the RSA decryption function to decrypt
+    # Use the RSA decryption function to decrypt
     # the current block
     decrypted_block = str((int(b)**e_inv) % n)
-    # print(f"{decrypted_block = }")
 
     if len(decrypted_block) < l:
-      # FIXME: If the decrypted block contains less digits
+      # If the decrypted block contains less digits
       # than the block size l, prepend the block with
       # enough 0's so that the numeric value of the block
       # remains the same, but the new block size is l,
       # e.g. if l = 4 and decrypted block is '19' then prepend
       # two 0's to obtain '0019'
       decrypted_block = decrypted_block.zfill(l)
-      # print(f"{decrypted_block = }")
 
-    # FIXME: Use util.py to append to text the decrypted block
+    # Use util.py to append to text the decrypted block
     # transformed into letters
     text += util.digits2letters(decrypted_block)
 
   return text
 
-# print(decryptRSA(20812182, 43, 59, 13))
+# Example usage: print(decryptRSA(20812182, 43, 59, 13))
